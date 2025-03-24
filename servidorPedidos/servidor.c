@@ -86,3 +86,25 @@ int * generarturno_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 	printf("\n");
 	return &result;
 }
+bool_t * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp)
+{
+	static bool_t  result;
+
+	/*
+	 * insert server code here
+	 */
+	printf("Se llamo a la función seleccionaridcocinero_1_svc\n");
+	result = 1;
+	return &result;
+}
+
+bool_t * terminarprepararpedido_1_svc(int *argp, struct svc_req *rqstp)
+{
+	static bool_t  result;
+	printf("Se llamo a la función terminarprepararpedido_1_svc\n");
+	/*
+	 * insert server code here
+	 */
+	result = 1;
+	return &result;
+}

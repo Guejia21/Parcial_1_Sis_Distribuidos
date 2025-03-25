@@ -19,20 +19,20 @@ extern "C" {
 
 #if defined(__STDC__) || defined(__cplusplus)
 #define seleccionarIDCocinero 1
-extern  bool_t * seleccionaridcocinero_1(int *, CLIENT *);
-extern  bool_t * seleccionaridcocinero_1_svc(int *, struct svc_req *);
+extern  int * seleccionaridcocinero_1(int *, CLIENT *);
+extern  int * seleccionaridcocinero_1_svc(int *, struct svc_req *);
 #define terminarPrepararPedido 2
-extern  bool_t * terminarprepararpedido_1(int *, CLIENT *);
-extern  bool_t * terminarprepararpedido_1_svc(int *, struct svc_req *);
+extern  int * terminarprepararpedido_1(int *, CLIENT *);
+extern  int * terminarprepararpedido_1_svc(int *, struct svc_req *);
 extern int gestionar_cocineros_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
 #define seleccionarIDCocinero 1
-extern  bool_t * seleccionaridcocinero_1();
-extern  bool_t * seleccionaridcocinero_1_svc();
+extern  int * seleccionaridcocinero_1();
+extern  int * seleccionaridcocinero_1_svc();
 #define terminarPrepararPedido 2
-extern  bool_t * terminarprepararpedido_1();
-extern  bool_t * terminarprepararpedido_1_svc();
+extern  int * terminarprepararpedido_1();
+extern  int * terminarprepararpedido_1_svc();
 extern int gestionar_cocineros_1_freeresult ();
 #endif /* K&R C */
 

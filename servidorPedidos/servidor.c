@@ -6,6 +6,7 @@
 
 #include "IntClienteSerPedidos.h"
 #include "IntSerPedidosSerDisplay.h"
+#include "IntCocineroSerPedidos.h"
 #include <stdbool.h>
 #include <string.h>
 
@@ -13,6 +14,7 @@
 int cantidadUsuariosFila = 0;
 cocinero vectorCocineros[3];
 nodo_hamburguesa filaVirtual[10];
+int cocinerosEnLinea[3] = {0,0,0};
 
 int consultarNumeroCocineroDispobible()
 {
@@ -86,25 +88,72 @@ int * generarturno_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 	printf("\n");
 	return &result;
 }
-bool_t * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp)
+int * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp)
 {
-	static bool_t  result;
+	static int  result;
+	int indexCoc= (*argp)-1;
+	printf("> Validando cocinero %d\n", indexCoc+1);
 
-	/*
-	 * insert server code here
-	 */
-	printf("Se llamo a la función seleccionaridcocinero_1_svc\n");
+	//1. Validamos que sea un codigo valido
+	if(indexCoc<0 || indexCoc>3){
+		result = 0;
+		return &result;
+	}
+
+	//2. Validamos que ya no este conectado
+
+	if( cocinerosEnLinea[indexCoc] != 0){
+		result = 0;
+		return &result;
+	}
+	
+	//Pre. El cocinero no esta conectado y el codigo es valido 
+	//3. Guardamos su conexion
+
+	cocinerosEnLinea[indexCoc] = 1;
+
+	//4. Notificamos la conexion
 	result = 1;
+
 	return &result;
 }
 
-bool_t * terminarprepararpedido_1_svc(int *argp, struct svc_req *rqstp)
+int * terminarprepararpedido_1_svc(int *argp, struct svc_req *rqstp)
 {
-	static bool_t  result;
-	printf("Se llamo a la función terminarprepararpedido_1_svc\n");
-	/*
-	 * insert server code here
-	 */
+	static int  result;
+	int indexCoc = (*argp)-1;
+	printf("> Terminando pedido del cocinero %d\n", indexCoc+1);
+
+
+	//1. Validar si el cocinero tiene un pedido
+	if(!vectorCocineros[indexCoc].ocupado){
+		result = 0;
+		return &result;
+	}
+	
+	//2. Se le asigna otro pedido al cocinero si hay pedidos en la fila
+	// - Si no hay mas en la fila, el cocinero queda libre
+	// - Si se atiende de la fila se debe mermar la cantidad de usuarios en la fila
+	
+	//Validacion si no hay fila
+	if(cantidadUsuariosFila==0){
+		vectorCocineros[indexCoc].ocupado=false;
+		notificar_cocineros_1();
+		result = 0;
+		return &result;
+	}
+	//pre. Hay usuarios en la fila
+	
+	//Asignamos al cocinero el siguiente pedido
+	vectorCocineros[indexCoc].objHamburguesaAPreparar=filaVirtual[0];
+	//Movemos la fila
+	for(int i=0;i<cantidadUsuariosFila-1;i++)
+		filaVirtual[i]=filaVirtual[i+1];
+	//Mermamos la fila
+	cantidadUsuariosFila--;
+
+	//3. Se debe notificar la actualizacion
+	notificar_cocineros_1();
 	result = 1;
 	return &result;
 }

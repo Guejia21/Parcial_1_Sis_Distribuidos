@@ -17,10 +17,10 @@ void mostrarMenuCocinero(int *idCocinero, CLIENT *clnt){
 		scanf("%d", &opcion);
 		switch(opcion){
 			case 1:{
-				result_2 = terminarprepararpedido_1(&idCocinero, clnt);
+				result_2 = terminarprepararpedido_1(idCocinero, clnt);
 				if(result_2 == (bool_t *) NULL){
 					clnt_perror(clnt, "call failed");
-				}else if(result_2 == 1){
+				}else if(*result_2 == 1){
 					printf("\nPedido terminado con exito");
 				}
 				else{

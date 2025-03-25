@@ -9,7 +9,7 @@
 void mostrarMenuCocinero(int *idCocinero, CLIENT *clnt){
 	int opcion;
 	do{	
-		bool_t  *result_2;
+		int *result_2;
 		printf("\nCocinero No:%d",idCocinero);
 		printf("\n1. Terminar preparar pedido");
 		printf("\n2. Salir");
@@ -42,7 +42,7 @@ void
 gestionar_cocineros_1(char *host)
 {
 	CLIENT *clnt;
-	bool_t  *result_1;
+	int  *result_1;
 	int  idCocinero;	
 
 #ifndef	DEBUG
@@ -64,8 +64,10 @@ gestionar_cocineros_1(char *host)
 			case 1:{
 				printf("\nDigite el ID del cocinero: ");
 				scanf("%d", &idCocinero);
+				printf("idCocinero: %d\n", idCocinero);
 				result_1 = seleccionaridcocinero_1(&idCocinero, clnt);
-				if(result_1 == (bool_t *) NULL){
+				if(result_1 == (int *) NULL){
+					printf("Pasa seleccionarcocinero_1\n");
 					clnt_perror(clnt, "call failed");
 					break;
 				}

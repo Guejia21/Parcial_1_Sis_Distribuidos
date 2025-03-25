@@ -7,6 +7,12 @@ struct nodo_hamburguesa{
     int tipoHamburguesa;
     char nombreHamburguesa[MAXIDENTIFICACION];
 };
+struct cocinero {
+    int noCocinero;
+    bool ocupado;
+    nodo_hamburguesa objHamburguesaAPreparar;
+}; 
+typedef struct cocinero cocinero;
 /*Definicion de las operaciones que se pueden realizar*/
 program autorizar_usuarios{
     version autorizar_usuarios_version{

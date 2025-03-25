@@ -20,3 +20,17 @@ xdr_nodo_hamburguesa (XDR *xdrs, nodo_hamburguesa *objp)
 		 return FALSE;
 	return TRUE;
 }
+
+bool_t
+xdr_cocinero (XDR *xdrs, cocinero *objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_int (xdrs, &objp->noCocinero))
+		 return FALSE;
+	 if (!xdr_bool (xdrs, &objp->ocupado))
+		 return FALSE;
+	 if (!xdr_nodo_hamburguesa (xdrs, &objp->objHamburguesaAPreparar))
+		 return FALSE;
+	return TRUE;
+}

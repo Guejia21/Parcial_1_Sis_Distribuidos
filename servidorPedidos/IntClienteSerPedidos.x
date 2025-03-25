@@ -9,7 +9,8 @@ struct nodo_hamburguesa{
 };
 struct cocinero {
     int noCocinero;
-    bool ocupado;
+    bool enLinea;
+    bool ocupado;    
     nodo_hamburguesa objHamburguesaAPreparar;
 }; 
 typedef struct cocinero cocinero;

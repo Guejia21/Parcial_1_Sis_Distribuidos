@@ -20,3 +20,58 @@ xdr_nodo_hamburguesa (XDR *xdrs, nodo_hamburguesa *objp)
 		 return FALSE;
 	return TRUE;
 }
+
+bool_t
+xdr_cocinero (XDR *xdrs, cocinero *objp)
+{
+	register int32_t *buf;
+
+
+	if (xdrs->x_op == XDR_ENCODE) {
+		buf = XDR_INLINE (xdrs, 3 * BYTES_PER_XDR_UNIT);
+		if (buf == NULL) {
+			 if (!xdr_int (xdrs, &objp->noCocinero))
+				 return FALSE;
+			 if (!xdr_bool (xdrs, &objp->enLinea))
+				 return FALSE;
+			 if (!xdr_bool (xdrs, &objp->ocupado))
+				 return FALSE;
+
+		} else {
+		IXDR_PUT_LONG(buf, objp->noCocinero);
+		IXDR_PUT_BOOL(buf, objp->enLinea);
+		IXDR_PUT_BOOL(buf, objp->ocupado);
+		}
+		 if (!xdr_nodo_hamburguesa (xdrs, &objp->objHamburguesaAPreparar))
+			 return FALSE;
+		return TRUE;
+	} else if (xdrs->x_op == XDR_DECODE) {
+		buf = XDR_INLINE (xdrs, 3 * BYTES_PER_XDR_UNIT);
+		if (buf == NULL) {
+			 if (!xdr_int (xdrs, &objp->noCocinero))
+				 return FALSE;
+			 if (!xdr_bool (xdrs, &objp->enLinea))
+				 return FALSE;
+			 if (!xdr_bool (xdrs, &objp->ocupado))
+				 return FALSE;
+
+		} else {
+		objp->noCocinero = IXDR_GET_LONG(buf);
+		objp->enLinea = IXDR_GET_BOOL(buf);
+		objp->ocupado = IXDR_GET_BOOL(buf);
+		}
+		 if (!xdr_nodo_hamburguesa (xdrs, &objp->objHamburguesaAPreparar))
+			 return FALSE;
+	 return TRUE;
+	}
+
+	 if (!xdr_int (xdrs, &objp->noCocinero))
+		 return FALSE;
+	 if (!xdr_bool (xdrs, &objp->enLinea))
+		 return FALSE;
+	 if (!xdr_bool (xdrs, &objp->ocupado))
+		 return FALSE;
+	 if (!xdr_nodo_hamburguesa (xdrs, &objp->objHamburguesaAPreparar))
+		 return FALSE;
+	return TRUE;
+}

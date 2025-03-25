@@ -14,7 +14,6 @@
 int cantidadUsuariosFila = 0;
 cocinero vectorCocineros[3];
 nodo_hamburguesa filaVirtual[10];
-int cocinerosEnLinea[3] = {0,0,0};
 
 int consultarNumeroCocineroDispobible()
 {
@@ -92,29 +91,24 @@ int * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static int  result;
 	int indexCoc= (*argp)-1;
-	printf("> Validando cocinero %d\n", indexCoc+1);
+	printf("Cocinero intentando conectarse con ID: %d\n", indexCoc+1);
 
-	//1. Validamos que sea un codigo valido
+	//Validamos que sea un codigo valido
 	if(indexCoc<0 || indexCoc>3){
+		printf("El cocinero intento conectarse con un ID invalido\n");
 		result = 0;
 		return &result;
 	}
-
-	//2. Validamos que ya no este conectado
-
-	if( cocinerosEnLinea[indexCoc] != 0){
+	//Validamos que no haya otro cocinero con el mismo ID
+	if(vectorCocineros[indexCoc].enLinea){
+		printf("El cocinero intento conectarse con un ID ya en uso\n");
 		result = 0;
 		return &result;
 	}
-	
-	//Pre. El cocinero no esta conectado y el codigo es valido 
-	//3. Guardamos su conexion
-
-	cocinerosEnLinea[indexCoc] = 1;
-
-	//4. Notificamos la conexion
+	//El cocinero se conecta
+	vectorCocineros[indexCoc].enLinea=true;
+	printf("El cocinero se conecto con exito\n");
 	result = 1;
-
 	return &result;
 }
 
@@ -122,37 +116,37 @@ int * terminarprepararpedido_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static int  result;
 	int indexCoc = (*argp)-1;
-	printf("> Terminando pedido del cocinero %d\n", indexCoc+1);
+	printf("El cocinero %d esta intentando terminar su pedido.\n", indexCoc+1);
 
 
-	//1. Validar si el cocinero tiene un pedido
+	//Validamos si el cocinero tiene un pedido 
 	if(!vectorCocineros[indexCoc].ocupado){
+		printf("El cocinero no tiene pedidos pendientes");
 		result = 0;
 		return &result;
 	}
+	printf("El pedido ha sido preparado");	
+	//El cocinero termina su pedido
+	//Se le asigna otro pedido al cocinero si hay pedidos en la fila		
 	
-	//2. Se le asigna otro pedido al cocinero si hay pedidos en la fila
-	// - Si no hay mas en la fila, el cocinero queda libre
-	// - Si se atiende de la fila se debe mermar la cantidad de usuarios en la fila
-	
-	//Validacion si no hay fila
+	//Si no hay más pedidos, el cocinero queda libre
 	if(cantidadUsuariosFila==0){
 		vectorCocineros[indexCoc].ocupado=false;
 		notificar_cocineros_1();
 		result = 0;
+		printf("No hay más pedidos pendientes");
 		return &result;
-	}
-	//pre. Hay usuarios en la fila
-	
+	}	
 	//Asignamos al cocinero el siguiente pedido
 	vectorCocineros[indexCoc].objHamburguesaAPreparar=filaVirtual[0];
+	printf("Se asigno un nuevo pedido al cocinero");
 	//Movemos la fila
 	for(int i=0;i<cantidadUsuariosFila-1;i++)
 		filaVirtual[i]=filaVirtual[i+1];
-	//Mermamos la fila
+	//Se elimina un pedido de la fila virtual
 	cantidadUsuariosFila--;
-
-	//3. Se debe notificar la actualizacion
+	
+	//Notificamos el cambio al servidor display
 	notificar_cocineros_1();
 	result = 1;
 	return &result;

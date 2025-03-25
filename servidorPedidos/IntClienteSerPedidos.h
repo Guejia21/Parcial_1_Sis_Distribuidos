@@ -24,11 +24,12 @@ typedef struct nodo_hamburguesa nodo_hamburguesa;
 
 struct cocinero {
 	int noCocinero;
+	bool_t enLinea;
 	bool_t ocupado;
 	nodo_hamburguesa objHamburguesaAPreparar;
 };
 typedef struct cocinero cocinero;
-
+extern cocinero vectorCocineros[3];
 
 #define autorizar_usuarios 0x20000001
 #define autorizar_usuarios_version 1

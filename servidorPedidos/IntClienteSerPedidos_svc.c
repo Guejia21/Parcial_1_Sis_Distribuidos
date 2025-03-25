@@ -5,6 +5,7 @@
 
 #include "IntClienteSerPedidos.h"
 #include "IntCocineroSerPedidos.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <rpc/pmap_clnt.h>
@@ -104,6 +105,17 @@ gestionar_cocineros_1(struct svc_req *rqstp, register SVCXPRT *transp)
 	}
 	return;
 }
+
+void cargarVectorCocineros(){
+	for (int i = 0; i < 3; i++)
+	{
+		vectorCocineros[i].noCocinero = (i+1);
+		vectorCocineros[i].ocupado = false;
+		vectorCocineros[i].enLinea = false;
+	}
+	
+}
+
 int
 main (int argc, char **argv)
 {
@@ -113,7 +125,6 @@ main (int argc, char **argv)
 	pmap_unset (gestionar_cocineros, gestionar_cocineros_version);
 
 	transp = svcudp_create(RPC_ANYSOCK);
-	
 	if (transp == NULL) {
 		fprintf (stderr, "%s", "cannot create udp service.");
 		exit(1);
@@ -139,6 +150,7 @@ main (int argc, char **argv)
 		fprintf (stderr, "%s", "unable to register (gestionar_cocineros, gestionar_cocineros_version, tcp).");
 		exit(1);
 	}
+	cargarVectorCocineros();
 	svc_run ();
 	fprintf (stderr, "%s", "svc_run returned");
 	exit (1);

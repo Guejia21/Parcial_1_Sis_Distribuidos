@@ -22,6 +22,15 @@ struct nodo_hamburguesa {
 };
 typedef struct nodo_hamburguesa nodo_hamburguesa;
 
+struct cocinero {
+	int noCocinero;
+	bool_t enLinea;
+	bool_t ocupado;
+	nodo_hamburguesa objHamburguesaAPreparar;
+};
+typedef struct cocinero cocinero;
+
+
 #define autorizar_usuarios 0x20000001
 #define autorizar_usuarios_version 1
 
@@ -42,9 +51,13 @@ extern int autorizar_usuarios_1_freeresult ();
 
 #if defined(__STDC__) || defined(__cplusplus)
 extern  bool_t xdr_nodo_hamburguesa (XDR *, nodo_hamburguesa*);
+extern  bool_t xdr_cocinero (XDR *, cocinero*);
+extern  bool_t xdr_cocinero (XDR *, cocinero*);
 
 #else /* K&R C */
 extern bool_t xdr_nodo_hamburguesa ();
+extern bool_t xdr_cocinero ();
+extern bool_t xdr_cocinero ();
 
 #endif /* K&R C */
 

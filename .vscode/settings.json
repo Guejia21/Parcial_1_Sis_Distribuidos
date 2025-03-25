@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "intcocineroserpedidos.h": "c"
+        "intcocineroserpedidos.h": "c",
+        "intclienteserpedidos.h": "c"
     }
 }

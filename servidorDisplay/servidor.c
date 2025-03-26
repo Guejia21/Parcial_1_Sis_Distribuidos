@@ -23,7 +23,11 @@ void * enviarnotificacion_1_svc(notificacion *argp, struct svc_req *rqstp)
 			(*argp).cocineros[i].objHamburguesaAPreparar.nombreHamburguesa);
 		}
 	}
-	printf("\n Cantidad de pedidos en la fila: %d", (*argp).cantidadUsuariosFilaVirtual);
+	int cantidadUsuariosFilaVirtual = (*argp).cantidadUsuariosFilaVirtual;
+	if (cantidadUsuariosFilaVirtual > 0)
+	{
+		printf("\n Cantidad de pedidos en la fila: %d", (*argp).cantidadUsuariosFilaVirtual);
+	}	
 	mostrarHoraUltimaActualizacion();
 	printf("\n");
 	return (void *) &result;

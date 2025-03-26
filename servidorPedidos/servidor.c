@@ -20,7 +20,7 @@ int consultarNumeroCocineroDispobible()
 	int i;
 	for(i = 0; i < 3; i++)
 	{
-		if(vectorCocineros[i].ocupado == false)
+		if(vectorCocineros[i].ocupado == false && vectorCocineros[i].enLinea == true)
 		{
 			return i;
 		}
@@ -108,6 +108,19 @@ int * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp)
 	//El cocinero se conecta
 	vectorCocineros[indexCoc].enLinea=true;
 	printf("El cocinero se conecto con exito\n");
+	//Si hay pedidos en la fila, se le asigna un pedido al cocinero directamente
+	if(cantidadUsuariosFila>0){
+		vectorCocineros[indexCoc].ocupado=true;
+		vectorCocineros[indexCoc].objHamburguesaAPreparar=filaVirtual[0];
+		printf("Se asigno un pedido al cocinero\n");
+		//Movemos la fila
+		for(int i=0;i<cantidadUsuariosFila-1;i++)
+			filaVirtual[i]=filaVirtual[i+1];
+		//Se elimina un pedido de la fila virtual
+		cantidadUsuariosFila--;
+		//Notificamos el cambio al servidor display
+		notificar_cocineros_1();
+	}
 	result = 1;
 	return &result;
 }
@@ -117,15 +130,14 @@ int * terminarprepararpedido_1_svc(int *argp, struct svc_req *rqstp)
 	static int  result;
 	int indexCoc = (*argp)-1;
 	printf("El cocinero %d esta intentando terminar su pedido.\n", indexCoc+1);
-
-
+	
 	//Validamos si el cocinero tiene un pedido 
-	if(!vectorCocineros[indexCoc].ocupado){
-		printf("El cocinero no tiene pedidos pendientes");
+	if(vectorCocineros[indexCoc].ocupado==false){
+		printf("El cocinero no tiene pedidos pendientes\n");
 		result = 0;
 		return &result;
 	}
-	printf("El pedido ha sido preparado");	
+	printf("El pedido ha sido preparado\n");	
 	//El cocinero termina su pedido
 	//Se le asigna otro pedido al cocinero si hay pedidos en la fila		
 	
@@ -133,13 +145,13 @@ int * terminarprepararpedido_1_svc(int *argp, struct svc_req *rqstp)
 	if(cantidadUsuariosFila==0){
 		vectorCocineros[indexCoc].ocupado=false;
 		notificar_cocineros_1();
-		result = 0;
-		printf("No hay más pedidos pendientes");
+		result = 1;
+		printf("No hay más pedidos pendientes\n");
 		return &result;
 	}	
 	//Asignamos al cocinero el siguiente pedido
 	vectorCocineros[indexCoc].objHamburguesaAPreparar=filaVirtual[0];
-	printf("Se asigno un nuevo pedido al cocinero");
+	printf("Se asigno un nuevo pedido al cocinero\n");
 	//Movemos la fila
 	for(int i=0;i<cantidadUsuariosFila-1;i++)
 		filaVirtual[i]=filaVirtual[i+1];

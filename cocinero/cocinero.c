@@ -20,10 +20,11 @@ void mostrarMenuCocinero(int idCocinero, CLIENT *clnt){
 				result_2 = terminarprepararpedido_1(&idCocinero, clnt);
 				if(result_2 == (int *) NULL){
 					clnt_perror(clnt, "call failed");
-				}else if(result_2 == (int *)1){
+				}else if(*result_2 == 1){
 					printf("\nPedido terminado con exito");
 				}
 				else{
+					printf("El resultado es: %d\n", *result_2);
 					printf("\nNo hay pedidos pendientes");
 				}
 				break;
@@ -72,7 +73,7 @@ gestionar_cocineros_1(char *host)
 					break;
 				}
 				else if (*result_1 == 1){
-					printf("\nCocinero seleccionado con exito");
+					printf("\nCocinero seleccionado con exito");					
 					mostrarMenuCocinero(idCocinero,clnt);
 				}	
 				else{

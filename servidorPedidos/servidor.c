@@ -10,11 +10,15 @@
 #include <stdbool.h>
 #include <string.h>
 
+int cantidadUsuariosFila = 0; // Cantidad de usuarios en fila virtual
+cocinero vectorCocineros[3]; // Vector de cocineros
+nodo_hamburguesa filaVirtual[10]; //Fila virtual
 
-int cantidadUsuariosFila = 0;
-cocinero vectorCocineros[3];
-nodo_hamburguesa filaVirtual[10];
-
+/**
+ * @brief Consultar el número de cocinero disponible
+ * 
+ * @return int 
+ */
 int consultarNumeroCocineroDispobible()
 {
 	int i;
@@ -27,6 +31,11 @@ int consultarNumeroCocineroDispobible()
 	}
 	return -1;
 }
+
+/**
+ * @brief Notificar a los cocineros
+ * @return void
+ */
 void notificar_cocineros_1()
 {
 	CLIENT *datosConexion;
@@ -35,13 +44,13 @@ void notificar_cocineros_1()
 	notificacion  objNotificacion;
 	strcpy(ipServidor,"localhost");
 
-#ifndef	DEBUG
+	#ifndef	DEBUG
 	datosConexion = clnt_create (ipServidor, notificar_cocineros, notificar_cocineros_version, "udp");
 	if (datosConexion == NULL) {
 		clnt_pcreateerror (ipServidor);
 		exit (1);
-	}
-#endif	/* DEBUG */
+	}	
+	#endif	/* DEBUG */
 	for(int i =0;i < 3;i++){
 		objNotificacion.cocineros[i].noCocinero = vectorCocineros[i].noCocinero;
 		objNotificacion.cocineros[i].ocupado = vectorCocineros[i].ocupado;
@@ -55,16 +64,23 @@ void notificar_cocineros_1()
 	if (result_1 == (void *) NULL) {
 		clnt_perror (datosConexion, "call failed");
 	}
-#ifndef	DEBUG
+	#ifndef	DEBUG
 	clnt_destroy (datosConexion);
-#endif	 /* DEBUG */
+	#endif	 /* DEBUG */
 }
 
+/**
+ * @brief Generar datos del pedido
+ * 
+ * @param argp 
+ * @param rqstp 
+ * @return int* 
+ */
 int * generarturno_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 {
 	static int  result;
 	int posicion = consultarNumeroCocineroDispobible();
-	printf("\n\n Hamburguesa a preparar");
+	printf("\n\n Hamburguesa a preparar:");
 	printf("\n Nombre hamburguesa: %s", (*argp).nombreHamburguesa);
 	printf("\n Tipo de hamburguesa: %d", (*argp).tipoHamburguesa);
 	printf("\n Cantidad de ingredientes extra: %d", (*argp).cantidadIngredientesExtra);
@@ -87,6 +103,14 @@ int * generarturno_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 	printf("\n");
 	return &result;
 }
+
+/**
+ * @brief Enlazar cocinero con el id
+ * 
+ * @param argp 
+ * @param rqstp 
+ * @return int* 
+ */
 int * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static int  result;
@@ -107,7 +131,7 @@ int * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp)
 	}
 	//El cocinero se conecta
 	vectorCocineros[indexCoc].enLinea=true;
-	printf("El cocinero se conecto con exito\n");
+	printf("El cocinero se conecto con exito!\n");
 	//Si hay pedidos en la fila, se le asigna un pedido al cocinero directamente
 	if(cantidadUsuariosFila>0){
 		vectorCocineros[indexCoc].ocupado=true;
@@ -125,6 +149,13 @@ int * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp)
 	return &result;
 }
 
+/**
+ * @brief Terminar preparar pedido
+ * 
+ * @param argp 
+ * @param rqstp 
+ * @return int* 
+ */
 int * terminarprepararpedido_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static int  result;
@@ -137,7 +168,7 @@ int * terminarprepararpedido_1_svc(int *argp, struct svc_req *rqstp)
 		result = 0;
 		return &result;
 	}
-	printf("El pedido ha sido preparado\n");	
+	printf("El pedido ha sido atendido!\n");	
 	//El cocinero termina su pedido
 	//Se le asigna otro pedido al cocinero si hay pedidos en la fila		
 	

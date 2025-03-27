@@ -6,22 +6,24 @@
 
 #include "IntClienteSerPedidos.h"
 
-
-void
-autorizar_usuarios_1(char *host)
+/***
+ * Funcion que permite enviar un pedido al servidor
+ * @param host direccion del servidor
+ * @return void
+ */
+void autorizar_usuarios_1(char *host)
 {
 	CLIENT *clnt;
 	int  *result_1;
 	nodo_hamburguesa  objHamburguesa;
 
-
-#ifndef	DEBUG
+	#ifndef	DEBUG
 	clnt = clnt_create (host, autorizar_usuarios, autorizar_usuarios_version, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);
 	}
-#endif	/* DEBUG */
+	#endif	/* DEBUG */
 	int opcion;
 	do{	
 		printf("\n============ Menu ==============");
@@ -29,24 +31,56 @@ autorizar_usuarios_1(char *host)
 		printf("\n2. Salir\n");
 		printf("================================");
 		printf("\nIngrese opcion: ");
-		scanf("%d", &opcion);
+		if (scanf("%d", &opcion) != 1) {
+			printf("Entrada inválida. Por favor, ingrese un número.\n");
+			while (getchar() != '\n'); // Limpiar el buffer de entrada
+			continue;
+		}
+		while (getchar() != '\n'); // Limpiar el buffer de entrada después de una entrada válida
 		switch(opcion){
 			case 1:{
-				printf("\nDigite el nombre de la hamburguesa: ");
-				scanf("%s", objHamburguesa.nombreHamburguesa);
-				printf("\nDigite el tipo de hamburguesa 1. Pequeña, 2. Mediana, 3. Grande: ");
-				scanf("%d", &objHamburguesa.tipoHamburguesa);
-				printf("Digite la cantidad de ingredientes extra: ");
-				scanf("%d", &objHamburguesa.cantidadIngredientesExtra);	
+				// Validar nombre de la hamburguesa
+				do {
+					printf("\nDigite el nombre de la hamburguesa: ");
+					scanf("%s", objHamburguesa.nombreHamburguesa);
+					if (strlen(objHamburguesa.nombreHamburguesa) == 0) {
+						printf("El nombre de la hamburguesa no puede estar vacío. Intente nuevamente.\n");
+					}
+				} while (strlen(objHamburguesa.nombreHamburguesa) == 0);
+				while (getchar() != '\n'); // Limpiar el buffer de entrada
+				// Validar tipo de hamburguesa
+				do {
+					printf("\nDigite el tipo de hamburguesa, 1. Pequeña, 2. Mediana, 3. Grande: ");
+					if (scanf("%d", &objHamburguesa.tipoHamburguesa) != 1 || 
+						objHamburguesa.tipoHamburguesa < 1 || 
+						objHamburguesa.tipoHamburguesa > 3) {
+						printf("Tipo de hamburguesa inválido. Intente nuevamente.\n");
+						while (getchar() != '\n'); // Limpiar el buffer de entrada
+					} else {
+						break;
+					}
+				} while (1);
+				// Validar cantidad de ingredientes extra
+				do {
+					printf("Digite la cantidad de ingredientes extra: ");
+					if (scanf("%d", &objHamburguesa.cantidadIngredientesExtra) != 1 || 
+						objHamburguesa.cantidadIngredientesExtra < 0) {
+						printf("Cantidad inválida. Debe ser un número entero no negativo. Intente nuevamente.\n");
+						while (getchar() != '\n'); // Limpiar el buffer de entrada
+					} else {
+						break;
+					}
+				} while (1);
+				while (getchar() != '\n'); // Limpiar el buffer de entrada después de una entrada válida
 				result_1	 = generarturno_1(&objHamburguesa, clnt);
 				if(result_1 == (int *) NULL){
 					clnt_perror(clnt, "call failed");
 				}else{
-					printf("\nCantidad de usuarios en la fila virtual %d", (*result_1));
+					printf("\nGenerando turno...");
+					printf("\nEstamos preparando tu pedido, ten paciencia!");
 				}
 				break;
 			}
-
 			case 2:{
 				printf("Hasta pronto\n");
 				break;
@@ -54,28 +88,22 @@ autorizar_usuarios_1(char *host)
 			default:{
 				printf("Opcion incorrecta\n");
 			}
-			
 		}
-		
 	}while(opcion != 2);
-
-	
-#ifndef	DEBUG
+	#ifndef	DEBUG
 	clnt_destroy (clnt);
-#endif	 /* DEBUG */
+	#endif	 /* DEBUG */
 }
 
 
-int
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
 	char *host;
-
 	if (argc < 2) {
 		printf ("usage: %s server_host\n", argv[0]);
 		exit (1);
 	}
 	host = argv[1];
 	autorizar_usuarios_1 (host);
-exit (0);
+	exit (0);
 }

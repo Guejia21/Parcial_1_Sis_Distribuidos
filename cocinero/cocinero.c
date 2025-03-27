@@ -6,6 +6,12 @@
 
 #include "IntCocineroSerPedidos.h"
 
+/***
+ * Funcion que permite mostrar el menu del cocinero
+ * @param idCocinero id del cocinero	
+ * @param clnt cliente
+ * @return void
+ */
 void mostrarMenuCocinero(int idCocinero, CLIENT *clnt){
 	int opcion;
 	do{	
@@ -21,10 +27,9 @@ void mostrarMenuCocinero(int idCocinero, CLIENT *clnt){
 				if(result_2 == (int *) NULL){
 					clnt_perror(clnt, "call failed");
 				}else if(*result_2 == 1){
-					printf("\nPedido terminado con exito");
+					printf("\nPedido terminado con exito!");
 				}
 				else{
-					printf("El resultado es: %d\n", *result_2);
 					printf("\nNo hay pedidos pendientes");
 				}
 				break;
@@ -39,20 +44,25 @@ void mostrarMenuCocinero(int idCocinero, CLIENT *clnt){
 		}
 	}while(opcion!=2);
 }
-void
-gestionar_cocineros_1(char *host)
+
+/**
+ * @brief Funcion que permite gestionar los cocineros
+ * @param host direccion del servidor
+ * @return void
+ */
+void gestionar_cocineros_1(char *host)
 {
 	CLIENT *clnt;
 	int  *result_1;
 	int  idCocinero;	
 
-#ifndef	DEBUG
+	#ifndef	DEBUG
 	clnt = clnt_create (host, gestionar_cocineros, gestionar_cocineros_version, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);
 	}
-#endif	/* DEBUG */
+	#endif	/* DEBUG */
 	int opcion;
 	do{
 		printf("\n============ Menu ==============");
@@ -65,23 +75,20 @@ gestionar_cocineros_1(char *host)
 			case 1:{
 				printf("\nDigite el ID del cocinero: ");
 				scanf("%d", &idCocinero);
-				printf("idCocinero: %d\n", idCocinero);
 				result_1 = seleccionaridcocinero_1(&idCocinero, clnt);
 				if(result_1 == (int *) NULL){
-					printf("Pasa seleccionarcocinero_1\n");
 					clnt_perror(clnt, "call failed");
 					break;
 				}
 				else if (*result_1 == 1){
-					printf("\nCocinero seleccionado con exito");					
+					printf("\nCocinero seleccionado con exito!");					
 					mostrarMenuCocinero(idCocinero,clnt);
 				}	
 				else{
-					printf("\nCocinero no disponible");
+					printf("\nId no disponible");
 				}			
 				break;
 			}
-
 			case 2:{
 				printf("Hasta pronto\n");
 				break;
@@ -89,26 +96,22 @@ gestionar_cocineros_1(char *host)
 			default:{
 				printf("Opcion incorrecta\n");
 			}
-			
 		}
-
 	}while (opcion!=2);	
-#ifndef	DEBUG
+	#ifndef	DEBUG
 	clnt_destroy (clnt);
-#endif	 /* DEBUG */
+	#endif	 /* DEBUG */
 }
 
 
-int
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
 	char *host;
-
 	if (argc < 2) {
 		printf ("usage: %s server_host\n", argv[0]);
 		exit (1);
 	}
 	host = argv[1];
 	gestionar_cocineros_1 (host);
-exit (0);
+	exit (0);
 }

@@ -92,7 +92,7 @@ int * generarturno_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 		printf("\n Hamburguesa agregada a la fila virtual");
 	}
 	else{
-		printf("\n El cocinero en la posicion %d está libre y se asiganara a la hamburguesa con nombre %s", (posicion+1), (*argp).nombreHamburguesa);
+		printf("\n El cocinero en la posicion %d está libre y se asignara a la hamburguesa con nombre %s", (posicion+1), (*argp).nombreHamburguesa);
 		//Se asgina la hamburguesa pedida al cocinero y se marca como ocupado
 		vectorCocineros[posicion].ocupado = true;
 		vectorCocineros[posicion].objHamburguesaAPreparar = *argp;
